@@ -19,14 +19,8 @@ pub struct Line {
 impl Line {
   pub fn new(a: &Point, b: &Point) -> Line {
     Line {
-      start: Point {
-        x: a.x,
-        y: a.y
-      },
-      end: Point {
-        x: b.x,
-        y: b.y,
-      },
+      start: Point { x: a.x, y: a.y },
+      end: Point { x: b.x, y: b.y },
       min: Point {
         x: if a.x < b.x { a.x } else { b.x },
         y: if a.y < b.y { a.y } else { b.y },
@@ -44,39 +38,32 @@ impl Line {
         (a.x - b.x).abs()
       } else {
         (a.y - b.y).abs()
-      }
+      },
     }
   }
 
   pub fn intersect(&self, other: &Self) -> Option<Point> {
-    if self.alignment == Alignment::Horizontal && other.alignment == Alignment::Vertical {
-      if self.min.x < other.min.x
-        && other.min.x < self.max.x
-        && other.min.y < self.min.y
-        && self.min.y < other.max.y
-      {
-        return Some(Point {
+    match (&self.alignment, &other.alignment) {
+      (Alignment::Horizontal, Alignment::Vertical) if Self::is_intersect(other, self) => {
+        Some(Point {
           x: other.min.x,
           y: self.min.y,
-        });
-      } else {
-        return None;
+        })
       }
-    } else if self.alignment == Alignment::Vertical && other.alignment == Alignment::Horizontal {
-      if self.min.y < other.min.y
-        && other.min.y < self.max.y
-        && other.min.x < self.min.x
-        && self.min.x < other.max.x
-      {
-        return Some(Point {
+      (Alignment::Vertical, Alignment::Horizontal) if Self::is_intersect(self, other) => {
+        Some(Point {
           x: self.min.x,
           y: other.min.y,
-        });
-      } else {
-        return None;
+        })
       }
-    } else {
-      return None;
+      _ => None,
     }
+  }
+
+  fn is_intersect(vertical: &Line, horizontal: &Line) -> bool {
+    return vertical.min.y < horizontal.min.y
+      && horizontal.min.y < vertical.max.y
+      && horizontal.min.x < vertical.min.x
+      && vertical.min.x < horizontal.max.x;
   }
 }

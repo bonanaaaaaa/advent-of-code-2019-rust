@@ -1,7 +1,5 @@
+use crate::day03::{line::Line, point::Point, utils};
 use crate::reader;
-
-use crate::day03::line::Line;
-use crate::day03::utils;
 
 pub fn run() {
   println!("Day 3 Part 1");
@@ -18,7 +16,7 @@ pub fn run() {
     for l2 in &line2 {
       match l1.intersect(l2) {
         Some(p) => {
-          let d = p.x.abs() + p.y.abs();
+          let d = p.distance(&Point { x: 0, y: 0 });
           if d < min_distance {
             min_distance = d;
           }

@@ -1,6 +1,5 @@
+use crate::day03::{line::Line, utils};
 use crate::reader;
-use crate::day03::line::Line;
-use crate::day03::utils;
 
 pub fn run() {
   println!("Day 3 Part 2");

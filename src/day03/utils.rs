@@ -1,7 +1,4 @@
-use crate::day03::{
-  point::Point,
-  line::Line
-};
+use crate::day03::{line::Line, point::Point};
 
 pub fn parse(path: &str) -> Vec<Line> {
   let mut origin = Point { x: 0, y: 0 };

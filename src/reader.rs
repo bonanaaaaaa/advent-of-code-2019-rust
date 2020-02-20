@@ -1,6 +1,6 @@
+use std::env;
 use std::fs;
 use std::path::PathBuf;
-use std::env;
 
 pub fn read(path_name: String) -> String {
   let relative_path = PathBuf::from(path_name);
