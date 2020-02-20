@@ -1,4 +1,5 @@
 mod day01;
+mod day02;
 
 use std::{io, process};
 
@@ -27,6 +28,13 @@ fn handle_input(input: &str) {
             match handle_part() {
                 Ok(Part::One) => day01::part1::run(),
                 Ok(Part::Two) => day01::part2::run(),
+                Err(err) => eprintln!("{:?}", err)
+            }
+        },
+        "2" => {
+            match handle_part() {
+                Ok(Part::One) => day02::part1::run(),
+                Ok(Part::Two) => day02::part2::run(),
                 Err(err) => eprintln!("{:?}", err)
             }
         },
