@@ -1,50 +1,30 @@
 #[path = "../reader.rs"]
 mod reader;
 
-use crate::day03::point::Point;
 use crate::day03::line::Line;
+use crate::day03::point::Point;
+use crate::day03::utils;
 
 pub fn run() {
   let contents = reader::read("src/day03/input1.txt".to_string());
 
-  let paths: Vec<String> = contents.split("\n").map(|s| String::from(s)).collect();
+  let paths: Vec<&str> = contents.split("\n").collect();
 
-  let mut origin = Point { x: 0, y: 0 };
-
-  let mut line1: Vec<Line> = Vec::new();
-  paths[0].split(",").for_each(|path| {
-    let l = decode(path, &mut origin);
-    line1.push(l);
-  });
-
-  origin = Point { x: 0, y: 0 };
-  let mut line2: Vec<Line> = Vec::new();
-  paths[1].split(",").for_each(|path| {
-    let l = decode(path, &mut origin);
-    line2.push(l);
-  });
+  let line1: Vec<Line> = utils::parse(paths[0]);
+  let line2: Vec<Line> = utils::parse(paths[1]);
 
   let mut min_distance = std::i32::MAX;
-
-  // println!("{:?}", line1);
-  // println!("{:?}", line2);
 
   for l1 in &line1 {
     for l2 in &line2 {
       match l1.intersect(l2) {
         Some(p) => {
-          // println!("Some: {:?} {:?}", l1, l2);
-          // println!("{:?}", p);
-
           let d = p.x.abs() + p.y.abs();
           if d < min_distance {
             min_distance = d;
           }
         }
-        None => {
-          // println!("None: {:?} {:?}", l1, l2);
-          continue
-        },
+        None => continue,
       }
     }
   }
@@ -67,7 +47,5 @@ fn decode(path: &str, p: &mut Point) -> Line {
     _ => (),
   };
 
-  let l = Line::new(&old_point, p);
-
-  l
+  Line::new(&old_point, p)
 }

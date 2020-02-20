@@ -3,3 +3,4 @@ pub mod part2;
 
 pub mod point;
 pub mod line;
+pub mod utils;
