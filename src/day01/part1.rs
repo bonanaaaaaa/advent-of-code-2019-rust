@@ -1,7 +1,7 @@
-#[path = "../reader.rs"]
-mod reader;
+use crate::reader;
 
 pub fn run () {
+  println!("Day 1 Part 1");
   let contents = reader::read("src/day01/input1.txt".to_string());
 
   let sum = contents.split("\n").fold(0, |acc, s| {

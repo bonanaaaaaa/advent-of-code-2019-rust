@@ -1,5 +1,4 @@
-#[path = "../reader.rs"]
-mod reader;
+use crate::reader;
 
 pub fn run() {
   println!("Day 2 Part 1");

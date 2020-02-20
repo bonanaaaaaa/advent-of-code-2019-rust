@@ -1,5 +1,7 @@
 use std::{io, process};
 
+mod reader;
+
 mod day01;
 mod day02;
 mod day03;
@@ -25,6 +27,14 @@ fn main() {
 fn handle_input(input: &str) {
     match input {
         "exit" => process::exit(0),
+        "all" => {
+            day01::part1::run();
+            day01::part2::run();
+            day02::part1::run();
+            day02::part2::run();
+            day03::part1::run();
+            day03::part2::run();
+        }
         "1" => {
             match handle_part() {
                 Ok(Part::One) => day01::part1::run(),

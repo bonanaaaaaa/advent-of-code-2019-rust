@@ -1,11 +1,9 @@
-#[path = "../reader.rs"]
-mod reader;
-
+use crate::reader;
 use crate::day03::line::Line;
-use crate::day03::point::Point;
 use crate::day03::utils;
 
 pub fn run() {
+  println!("Day 3 Part 2");
   let contents = reader::read("src/day03/input2.txt".to_string());
 
   let paths: Vec<&str> = contents.split("\n").collect();
@@ -33,20 +31,4 @@ pub fn run() {
     i += l1.length;
   }
   println!("{}", min_steps);
-}
-
-fn decode(path: &str, p: &mut Point) -> Line {
-  let tup = path.split_at(1);
-  let direction = tup.0;
-  let distance: i32 = tup.1.parse().unwrap();
-  let old_point = Point { x: p.x, y: p.y };
-  match direction {
-    "U" => p.y += distance,
-    "D" => p.y -= distance,
-    "L" => p.x -= distance,
-    "R" => p.x += distance,
-    _ => (),
-  };
-
-  Line::new(&old_point, p)
 }
