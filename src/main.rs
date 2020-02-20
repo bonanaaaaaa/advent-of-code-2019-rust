@@ -1,0 +1,54 @@
+mod day01;
+
+use std::{io, process};
+
+#[derive(Debug)]
+enum Part {
+    One,
+    Two,
+}
+
+fn main() {
+    let mut i = String::new();
+    println!("Please input day:");
+    match io::stdin().read_line(&mut i) {
+        Ok(_) => {
+            let input = i.as_str().trim_end();
+            handle_input(input);
+        }
+        Err(error) => println!("error: {}", error),
+    }
+}
+
+fn handle_input(input: &str) {
+    match input {
+        "exit" => process::exit(0),
+        "1" => {
+            match handle_part() {
+                Ok(Part::One) => day01::part1::run(),
+                Ok(Part::Two) => day01::part2::run(),
+                Err(err) => eprintln!("{:?}", err)
+            }
+        },
+        _ => {
+            eprintln!("day is invalid")
+        }
+    }
+}
+
+fn handle_part() -> Result<Part, &'static str> {
+    let mut i = String::new();
+    println!("Please input part:");
+    match io::stdin().read_line(&mut i) {
+        Ok(_) => {
+            match i.as_str().trim_end() {
+                "1" => Ok(Part::One),
+                "2" => Ok(Part::Two),
+                _ => Err("Part is invalid")
+            }
+        },
+        Err(_) => {
+            Err("error")
+        }
+    }
+}
