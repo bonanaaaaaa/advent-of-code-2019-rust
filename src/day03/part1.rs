@@ -1,76 +1,8 @@
 #[path = "../reader.rs"]
 mod reader;
 
-#[derive(Debug)]
-struct Point {
-  x: i32,
-  y: i32,
-}
-
-#[derive(PartialEq, Debug)]
-enum Alignment {
-  Horizontal,
-  Vertical,
-}
-
-#[derive(Debug)]
-struct Line {
-  start: Point,
-  end: Point,
-  alignment: Alignment,
-}
-
-impl Line {
-  pub fn new(a: &Point, b: &Point) -> Line {
-    Line {
-      start: Point {
-        x: if a.x < b.x { a.x } else { b.x },
-        y: if a.y < b.y { a.y } else { b.y },
-      },
-      end: Point {
-        x: if a.x > b.x { a.x } else { b.x },
-        y: if a.y > b.y { a.y } else { b.y },
-      },
-      alignment: if a.y == b.y {
-        Alignment::Horizontal
-      } else {
-        Alignment::Vertical
-      },
-    }
-  }
-
-  pub fn intersect(&self, other: &Line) -> Option<Point> {
-    if self.alignment == Alignment::Horizontal && other.alignment == Alignment::Vertical {
-      if self.start.x < other.start.x
-        && other.start.x < self.end.x
-        && other.start.y < self.start.y
-        && self.start.y < other.end.y
-      {
-        return Some(Point {
-          x: other.start.x,
-          y: self.start.y,
-        });
-      } else {
-        return None;
-      }
-    } else if self.alignment == Alignment::Vertical && other.alignment == Alignment::Horizontal {
-      if self.start.y < other.start.y
-        && other.start.y < self.end.y
-        && other.start.x < self.start.x
-        && self.start.x < other.start.x
-      {
-        return Some(Point {
-          x: self.start.x,
-          y: other.start.y,
-        });
-      } else {
-        return None;
-      }
-    } else {
-      return None;
-    }
-  }
-}
+use crate::day03::point::Point;
+use crate::day03::line::Line;
 
 pub fn run() {
   let contents = reader::read("src/day03/input1.txt".to_string());
@@ -92,7 +24,7 @@ pub fn run() {
     line2.push(l);
   });
 
-  let mut min_distance = 9999999;
+  let mut min_distance = std::i32::MAX;
 
   // println!("{:?}", line1);
   // println!("{:?}", line2);

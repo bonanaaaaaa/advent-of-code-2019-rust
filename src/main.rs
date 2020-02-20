@@ -1,8 +1,8 @@
+use std::{io, process};
+
 mod day01;
 mod day02;
 mod day03;
-
-use std::{io, process};
 
 #[derive(Debug)]
 enum Part {
