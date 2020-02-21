@@ -5,6 +5,7 @@ mod reader;
 mod day01;
 mod day02;
 mod day03;
+mod day04;
 
 #[derive(Debug)]
 enum Part {
@@ -49,6 +50,12 @@ fn handle_input(input: &str) {
       Ok(Part::One) => day03::part1::run(),
       Ok(Part::Two) => day03::part2::run(),
       Ok(Part::All) => day03::all(),
+      Err(err) => eprintln!("{:?}", err),
+    },
+    "4" => match handle_part() {
+      Ok(Part::One) => day04::part1::run(),
+      Ok(Part::Two) => day04::part2::run(),
+      Ok(Part::All) => day04::all(),
       Err(err) => eprintln!("{:?}", err),
     },
     _ => eprintln!("day is invalid"),
