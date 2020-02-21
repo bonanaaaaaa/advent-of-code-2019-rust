@@ -14,13 +14,13 @@ pub fn run() {
 
 fn cal(num: i32) -> i32 {
   let mut sum = 0;
-  let mut current = num;
+  let mut current = (num / 3 as i32) - 2;
   loop {
-    current = (current / 3 as i32) - 2;
     if current <= 0 {
       break;
     }
     sum += current;
+    current = (current / 3 as i32) - 2;
   }
   sum
 }
