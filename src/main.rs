@@ -6,6 +6,7 @@ mod day01;
 mod day02;
 mod day03;
 mod day04;
+mod day05;
 
 #[derive(Debug)]
 enum Part {
@@ -56,6 +57,12 @@ fn handle_input(input: &str) {
       Ok(Part::One) => day04::part1::run(),
       Ok(Part::Two) => day04::part2::run(),
       Ok(Part::All) => day04::all(),
+      Err(err) => eprintln!("{:?}", err),
+    },
+    "5" => match handle_part() {
+      Ok(Part::One) => day05::part1::run(),
+      Ok(Part::Two) => day05::part2::run(),
+      Ok(Part::All) => day05::all(),
       Err(err) => eprintln!("{:?}", err),
     },
     _ => eprintln!("day is invalid"),
