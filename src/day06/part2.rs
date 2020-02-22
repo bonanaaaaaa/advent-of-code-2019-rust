@@ -43,8 +43,10 @@ pub fn run() {
 
   let root: &str = tmp.clone();
 
-  let you_path = dfs(&node_map, root, vec![root.to_string()], "YOU").unwrap();
-  let santa_path = dfs(&node_map, root, vec![root.to_string()], "SAN").unwrap();
+  let mut you_path = vec![];
+  let mut santa_path = vec![];
+  dfs(&node_map, root, &mut you_path, "YOU");
+  dfs(&node_map, root, &mut santa_path, "SAN");
 
   let mut y_iter = you_path.iter();
   let mut s_iter = santa_path.iter();
@@ -68,46 +70,41 @@ pub fn run() {
   // println!("{:?}", intersect_path);
   // println!("{}", count);
 
-  let ans = you_path.len() - count + santa_path.len() - count - 2;
+  let ans = you_path.len() + santa_path.len() - (2 * count);
   println!("{}", ans);
 }
 
-fn dfs(
-  n: &HashMap<&str, Vec<&str>>,
-  current: &str,
-  path: Vec<String>,
+fn dfs<'a>(
+  n: &'a HashMap<&str, Vec<&str>>,
+  current: &'a str,
+  ans: &mut Vec<&'a str>,
   target: &str,
-) -> Option<Vec<String>> {
-  // println!("{} {}", current, target);
-  if current == target {
-    return Some(path.to_vec());
-  }
-  let children = n.get(current).unwrap();
-  if children.len() == 0 {
-    return None;
-  }
-
-  let mut ans = vec![];
-
-  for c in children {
-    match dfs(n, c, create_new_vec(&path, c.to_string()), target) {
-      Some(n) => {
-        ans = n;
-        break;
-      }
-      _ => (),
-    }
-  }
-
-  if ans.is_empty() {
-    None
-  } else {
-    Some(ans)
-  }
+) {
+  run_dfs(n, current, &mut vec![current], ans, target);
 }
 
-fn create_new_vec(v: &Vec<String>, s: String) -> Vec<String> {
-  let mut new_v = v.clone();
-  new_v.push(s);
-  new_v.clone()
+fn run_dfs<'a>(
+  n: &'a HashMap<&str, Vec<&str>>,
+  current: &'a str,
+  path: &mut Vec<&'a str>,
+  ans: &mut Vec<&'a str>,
+  target: &str,
+) {
+  // println!("{} {:?}", current, path);
+  let children = n.get(current).unwrap();
+  if children.len() == 0 {
+    return;
+  }
+
+  for c in children {
+    if *c == target {
+      for p in path {
+        ans.push(p);
+      }
+      return;
+    }
+    path.push(c);
+    run_dfs(n, c, path, ans, target);
+    path.pop();
+  }
 }
