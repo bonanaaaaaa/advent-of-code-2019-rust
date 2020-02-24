@@ -1,9 +1,4 @@
 use crate::reader;
-use std::collections::HashMap;
-use std::sync::mpsc;
-use std::sync::{Arc, Mutex};
-use std::thread;
-use std::time;
 
 pub fn run() {
   println!("Day 7 Part 2");
@@ -18,116 +13,49 @@ pub fn run() {
   let all_possible = generate_all_possible_phase_setting();
 
   let mut max_output = std::i32::MIN;
-  let (tx, rx) = mpsc::channel();
-  let mut children = Vec::new();
-  let map_thread: HashMap<std::thread::ThreadId, i32> = HashMap::new();
-  let lock = Arc::new(Mutex::new(map_thread));
 
-  // let val = String::from("hi");
-  // tx.send(val).unwrap();
   for sequence in all_possible {
-    let thread_tx = tx.clone();
-    let op_c = op_code.clone();
-    // let thread_lock = lock.clone();
-    let child = thread::spawn(move || {
-      let mut input = 0;
-      let mut computers: Vec<IntCodeComputer> = sequence
-        .iter()
-        .map(|&n| IntCodeComputer::new(&op_c, n))
-        .collect();
+    let mut input = 0;
+    let mut computers: Vec<IntCodeComputer> = sequence
+      .iter()
+      .map(|&n| IntCodeComputer::new(&op_code, n))
+      .collect();
 
-      let mut counter = 0;
-      let computer_len = computers.len();
+    let mut counter = 0;
+    let computer_len = computers.len();
+    let mut last_value = 0;
 
-      loop {
-        let computer = &mut computers[counter as usize];
-        match computer.compute(input) {
-          Ok(output) => {
-            input = output;
-          }
-          Err(_e) => {
-            // eprint!("{}", e);
-            break;
-          }
+    loop {
+      let computer = &mut computers[counter as usize];
+      match computer.compute(input) {
+        Ok(output) => {
+          input = output;
         }
-
-        counter = if counter + 1 >= computer_len {
-          max_output = max_output.max(input);
-          thread_tx.send((thread::current().id(), input)).unwrap();
-          // let mut map = thread_lock.lock().unwrap();
-          // map.insert(thread::current().id(), input);
-          0
-        } else {
-          counter + 1
-        };
+        Err(_) => {
+          break;
+        }
       }
-      drop(thread_tx);
-    });
-    children.push(child);
+
+      counter = if counter + 1 >= computer_len {
+        last_value = input;
+        0
+      } else {
+        counter + 1
+      };
+    }
+    max_output = max_output.max(last_value);
   }
-
-  // let mut map_thread: HashMap<std::thread::ThreadId, i32> = HashMap::new();
-  let thread_lock = lock.clone();
-  thread::spawn(move || {
-    for received in rx {
-      // let d = Duration::from_millis(1000);
-      // let _r = rx.recv_timeout(d);
-      let mut map = thread_lock.lock().unwrap();
-      println!("Got: {:?}", received);
-      map.insert(received.0, received.1);
-      // println!("Max: {}", max_output);
-    }
-
-    println!("TADA");
-
-    let map = thread_lock.lock().unwrap();
-    for (_, v) in map.iter() {
-      println!("{}", v);
-      max_output = max_output.max(*v);
-    }
-  });
-
-  let ten_millis = time::Duration::from_millis(10000);
-  // // let now = time::Instant::now();
-
-  thread::sleep(ten_millis);
-
-  // let m = match lock.lock() {
-  //   Ok(guard) => guard,
-  //   Err(poisoned) => poisoned.into_inner(),
-  // };
-
-  // for (_, v) in m.iter() {
-  //   max_output = max_output.max(*v);
-  // }
-
-  for child in children {
-    match child.join() {
-      Ok(()) => continue,
-      Err(e) => {
-        // println!("{:?}", e);
-        continue;
-      }
-    }
-  }
-
-  // let d = Duration::from_millis(1000);
-  // rx.recv_timeout(d)
-
-  // println!("END");
   println!("{}", max_output);
 }
 
 fn generate_all_possible_phase_setting() -> Vec<Vec<i32>> {
-  // let phase_setting = vec![5, 6, 7, 8, 9];
+  let phase_setting = vec![5, 6, 7, 8, 9];
 
-  // let mut ans: Vec<Vec<i32>> = vec![];
+  let mut ans: Vec<Vec<i32>> = vec![];
 
-  // pick(phase_setting, &mut ans);
+  pick(phase_setting, &mut ans);
 
-  // return ans.clone();
-  // vec![vec![9, 8, 7, 6, 5]]
-  vec![vec![9, 7, 8, 5, 6]]
+  return ans.clone();
 }
 
 fn pick(data: Vec<i32>, ans: &mut Vec<Vec<i32>>) {
@@ -154,6 +82,7 @@ struct IntCodeComputer {
   op_code: Vec<i32>,
   phase_setting: i32,
   ptr: usize,
+  is_phase_setting_used: bool,
 }
 
 impl IntCodeComputer {
@@ -162,13 +91,11 @@ impl IntCodeComputer {
       op_code: op_code.clone(),
       phase_setting: phase_setting,
       ptr: 0,
+      is_phase_setting_used: false,
     }
   }
 
   fn compute(&mut self, input_signal: i32) -> Result<i32, &str> {
-    // let mut op_code = self.op_code.clone();
-    // let mut ptr = 0;
-    let mut is_phase_setting_used = false;
     loop {
       let op = self.op_code[self.ptr] % 100;
       let res = (self.op_code[self.ptr] / 100) as i32;
@@ -186,13 +113,12 @@ impl IntCodeComputer {
           self.ptr = self.ptr + 4;
         }
         3 => {
-          let input = if is_phase_setting_used {
+          let input = if self.is_phase_setting_used {
             input_signal
           } else {
-            is_phase_setting_used = true;
+            self.is_phase_setting_used = true;
             self.phase_setting
           };
-          // println!("input: {}", input);
           let pos = self.op_code[self.ptr + 1] as usize;
           self.op_code[pos] = input;
           self.ptr = self.ptr + 2;
@@ -200,11 +126,8 @@ impl IntCodeComputer {
         4 => {
           let m = res % 10;
           let output = get_value(m, self.ptr + 1, &self.op_code);
-          // println!("output: {}", output);
-          // if output != 0 {
+          self.ptr = self.ptr + 2;
           return Ok(output);
-          // }
-          // ptr = ptr + 2;
         }
         5 => {
           let m1 = res % 10;
