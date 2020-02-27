@@ -3,7 +3,7 @@ use crate::reader;
 pub fn run() {
   println!("Day 7 Part 1");
 
-  let contents = reader::read("src/day07/input1.txt".to_string());
+  let contents = reader::read("src/day07/input.txt".to_string());
 
   let op_code: Vec<i32> = contents
     .split(",")
@@ -24,7 +24,6 @@ pub fn run() {
           input = output;
         }
         Err(_e) => {
-          // eprintln!("{}", e);
           skip = true;
           break;
         }
@@ -121,11 +120,7 @@ impl IntCodeComputer {
         4 => {
           let m = res % 10;
           let output = get_value(m, ptr + 1, &op_code);
-          // println!("output: {}", output);
-          // if output != 0 {
           return Ok(output);
-          // }
-          // ptr = ptr + 2;
         }
         5 => {
           let m1 = res % 10;

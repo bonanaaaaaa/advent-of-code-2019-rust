@@ -6,7 +6,7 @@ use std::thread;
 pub fn run() {
   println!("Day 7 Part 2");
 
-  let contents = reader::read("src/day07/input2.txt".to_string());
+  let contents = reader::read("src/day07/input.txt".to_string());
 
   let op_code: Vec<i32> = contents
     .split(",")
